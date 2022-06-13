@@ -6,12 +6,22 @@ const StudentModel = require('../model/user.model')
 const router = express.Router();
 
 router.post('/user/create',async(req,res)=>{
-    const user = new StudentModel(req.body)
+    const user = new StudentModel(req.body)        
     try{
         await user.save();
         res.status(200).send(user);
     }catch(err){
-        res.status(400).send(err);
+        res.status(404).send(err);
+    }
+})
+
+router.post('/user/login',async(req,res)=>{
+    try{
+        const user = await StudentModel.findByCredidential(req.body.rollNumber,req.body.password)
+        req.send(user)
+
+    }catch(err){
+        res.status(400).send(err)
     }
 })
 
