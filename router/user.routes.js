@@ -17,8 +17,17 @@ router.post('/user/create',async(req,res)=>{
 
 router.post('/user/login',async(req,res)=>{
     try{
-        const user = await StudentModel.findByCredidential(req.body.rollNumber,req.body.password)
-        req.send(user)
+       
+        const user = await StudentModel.findOne({rollNumber:req.body.rollNumber})
+        if(!user){
+           return res.status(401).send({msg:'user does not exit',status:401})
+        }
+        const passwordaccess = user.password==req.body.password
+        if(!passwordaccess){
+            return res.status(400).send({msg:'password not match',status:400})
+        }else{
+           return  res.status(200).send({msg:'login successful',data:user,status:200})
+        }
 
     }catch(err){
         res.status(400).send(err)

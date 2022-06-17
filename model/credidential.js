@@ -18,4 +18,16 @@ const credential = StudentModel.statics.findByCredidential = async(rollNumber,pa
     return user
 }
 
+//hash the plain text password before saving
+
+StudentModel.pre('save', async function(next){
+    const user=this
+
+    if(user.isModified('password')){
+        user.password=await bcrypt.hash(user.password, 8)
+    }
+
+    next()
+})
+
 module.exports = Credential
