@@ -132,7 +132,6 @@ router.post('/user/login',async(req,res)=>{
     try{
         
         const user = await StudentModel.findOne({rollNumber:req.body.rollNumber})
-        console.log('rollnumber =>',req.body.rollNumber)
         const token = await user.generateNewToken()
         if(!user){
            return res.status(401).send({msg:'user does not exit',status:401})
@@ -241,19 +240,42 @@ router.post('/user/logout',Auth,async(req,res)=>{
 
 /**
  * @swagger
- * tags:
- *  name: MainData
- *  description: this is for the main data
  * /user/read:
- *  get:
- *      tags: [MainData]
- *      operationId: read details
- *      summary: Read user profile
+ *   get:
+ *     description:  Show user Profile.
+ *     operationId: user profile
+ *     security:
+ *     - Basic: []
+ *     tags:
+ *     - MainData
+ *     responses:
+ *       200:
+ *         description: Show user profile by token
+ *         schema:
+ *           type: object
+ *           properties:
+ *             message:
+ *               type: string
+ *               example: 'Success'
+ *       404:
+ *         description: Unauthenticated Entity
+ *         schema:
+ *           type: object
+ *           properties:
+ *             status:
+ *               type: false
+ *               example: true
+ *             message:
+ *               type: string
+ *               example: The request was unacceptable, often due unauthenticated a required parameter.
  */
-
 router.get('/user/read',Auth,async(req,res)=>{
-   
+   try{
     return res.status(200).send(req.user)
+   }catch(err){
+    console.log("error =>",err)
+    return res.status(400).send({message:'Unauthenticated user!', data:null ,status:400})
+   }
 })
 
 router.get('/user/read/:_id',async(req,res)=>{
@@ -302,14 +324,34 @@ router.patch('/user/update',Auth,async(req,res)=>{
 
 /**
  * @swagger
- * tags:
- *  name: MainData
- *  description: this is for the main data
  * /user/delete:
- *  delete:
- *      tags: [MainData]
- *      operationId: delete user
- *      summary: delete user profile
+ *   delete:
+ *     description:  delete user Profile.
+ *     operationId: delete user profile
+ *     security:
+ *     - Basic: []
+ *     tags:
+ *     - MainData
+ *     responses:
+ *       200:
+ *         description:  user profile by token
+ *         schema:
+ *           type: object
+ *           properties:
+ *             message:
+ *               type: string
+ *               example: 'Success'
+ *       404:
+ *         description: Unauthenticated Entity
+ *         schema:
+ *           type: object
+ *           properties:
+ *             status:
+ *               type: false
+ *               example: true
+ *             message:
+ *               type: string
+ *               example: The request was unacceptable, often due unauthenticated a required parameter.
  */
 
 router.delete('/user/delete',Auth, async(req,res)=>{

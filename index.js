@@ -6,6 +6,7 @@ require('dotenv').config();
 const express = require('express');
 require('./database/db');
 const router = require('./router/user.routes');
+const bodyParser = require("body-parser")
 
 
 const basicAuth = require('express-basic-auth')
@@ -15,7 +16,7 @@ const app = express();
 // dbConnect();
 
 app.use(express.json());
-
+app.use(bodyParser.urlencoded({ extended: true }));
 
 
 
