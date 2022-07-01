@@ -8,11 +8,19 @@ require('./database/db');
 const router = require('./router/user.routes');
 
 
+const basicAuth = require('express-basic-auth')
+
 const app = express();
 
 // dbConnect();
 
 app.use(express.json());
+
+
+
+
+
+
 app.use(router);
 
 app.listen(process.env.PORT,(err)=>{

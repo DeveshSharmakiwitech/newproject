@@ -1,9 +1,28 @@
 // import mongoose from "mongoose";
 // import validator from "validator"
 
+const res = require('express/lib/response')
 const mongoose= require('mongoose')
 const { stringify } = require('nodemon/lib/utils')
 const validator = require('validator')
+const jwt = require('jsonwebtoken')
+
+/**
+ * @swagger
+ * definitions:
+ *   UserCreate:
+ *     properties:
+ *       name:
+ *        type: string
+ *       email:
+ *         type: string
+ *       password:
+ *         type: string
+ *       rollNumber:
+ *          type: number
+ *       address:
+ *          type: string
+ */
 
 studentSchema=new mongoose.Schema({
     name:{
@@ -15,7 +34,7 @@ studentSchema=new mongoose.Schema({
         type:String,
         require:true,
         trim:true,
-        unique:1,
+        unique:true,
         validate(value){
             if(validator.isEmpty(value)){
                 throw new Error('Enter the Email')
@@ -53,6 +72,10 @@ studentSchema=new mongoose.Schema({
         require:true,
         trim:true
     },
+    otp : {
+        type : Number,
+        require:true
+    },
     tokens:[{
         token:{
             type:String,
@@ -63,6 +86,23 @@ studentSchema=new mongoose.Schema({
     timestamps:true
 })
 
+studentSchema.methods.generateNewToken = async function(){
+    try{ 
+        const user = this
+        const token = jwt.sign({ _id:user._id.toString() }, process.env.Secret_Key);
+        user.tokens = user.tokens.concat({token})
+        await user.save();
+        return token
+
+    }catch(err){
+           console.log(err)
+           res.send({message : "the error part of generate token " + err});
+    }
+}
+
 const StudentModel=new mongoose.model('students',studentSchema)
+
+
+
 
 module.exports=StudentModel
