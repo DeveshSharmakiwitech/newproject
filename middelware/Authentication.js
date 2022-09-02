@@ -12,7 +12,7 @@ const Auth = async (req,res,next)=>{
     }
     const tokenVerify = jwt.verify(token,process.env.Secret_Key);
     const user = await StudentModel.findOne({ _id : tokenVerify._id , tokens:{$elemMatch:{token:token} }})
-   console.log('user==>',user)
+   
     if(!user){
       return  res.status(400).send({message:'User not found',status:400})
     }
@@ -23,7 +23,7 @@ const Auth = async (req,res,next)=>{
 
     next()
 }catch(err){
-  console.log(err)
+  
    return res.status(401).send({message:'Unauthorized token', status:401})
 }
 }

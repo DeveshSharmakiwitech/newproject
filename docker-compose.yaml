@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+    api:
+      build:
+        context: .
+        dockerfile: Dockerfile
+      image: curd_api:2.0
+      ports: 
+        - "4000:4000"
+      environment:
+        ecret_Key:  thisismynewtokenforgeneratetoken
+      volumes:
+        - .:/app
+      external_links:
+        - mongo
+    mongo:
+      image: mongo
+      restart: always
+      environment:
+        mongo_url: 'mongodb://localhost:27017'
+        db_name: 'student'
+      ports:
+        - '27017:27017'
+    # mongo-express: 
+    #   container_name: mongo-express
+    #   image: mongo-express
+    #   restart: always
+    #   # ports:
+      #   - '8081:8081'
+      
+   

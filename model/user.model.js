@@ -79,8 +79,11 @@ studentSchema=new mongoose.Schema({
     tokens:[{
         token:{
             type:String,
-            require:true
-        }
+            require:true,
+        },
+        time:{
+            type: Date
+        },
     }]
 },{
     timestamps:true
@@ -90,7 +93,9 @@ studentSchema.methods.generateNewToken = async function(){
     try{ 
         const user = this
         const token = jwt.sign({ _id:user._id.toString() }, process.env.Secret_Key);
-        user.tokens = user.tokens.concat({token})
+        const time = new Date();
+        user.tokens = user.tokens.concat({token:token})
+        user.tokens = user.tokens.concat({time:time})
         await user.save();
         return token
 
